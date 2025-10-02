@@ -180,6 +180,4 @@ The project follows an iterative development methodology with clear phase separa
 
 ---
 
-*HBnB Evolution - Part 1 Technical Documentation*  
-*Document Version: 1.0 | Comprehensive Architecture Specification*  
-*Holberton School - 2025*
+*HBnB  - Part 1 Technical Documentation*  
