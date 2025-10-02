@@ -174,9 +174,9 @@ The project follows an iterative development methodology with clear phase separa
 - Security assessment and vulnerability testing
 
 ## Author
-**Sedra Ramarosaona** - [GitHub Profile Link]
-**Sedra Ramarosaona** - [GitHub Profile Link]
-**Sedra Ramarosaona** - [GitHub Profile Link]
+**Sedra Ramarosaona** - [GitHub Profile Link](https://github.com/SedraR78)
+**Frances Mascarenhas Palmer** - [GitHub Profile Link](https://github.com/FrancesMP)
+**Bryan Kotro Mbomba** - [GitHub Profile Link]
 
 ---
 
