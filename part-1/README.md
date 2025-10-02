@@ -1,238 +1,185 @@
 # HBnB Evolution - Technical Documentation
-## Part 1: System Architecture and Design
 
-### Project Context
-HBnB Evolution is a comprehensive property rental platform inspired by modern sharing economy applications. This document serves as the foundational technical blueprint for the entire system, detailing the architectural decisions, business logic design, and interaction patterns that will guide the implementation phases.
+**View Styled Version**: [documentation.html](documentation.html)
 
----
 
-## 1. High-Level System Architecture
+This document contains the complete technical documentation for HBnB Evolution project — Part 1 of Holberton School curriculum. It provides all required UML diagrams and architectural specifications for the application's foundation.
 
-### 1.1 Package Diagram Overview
+## Summary
+- [Introduction](#introduction)
+- [High-Level Architecture](#high-level-architecture)
+- [Business Logic Layer](#business-logic-layer)
+- [API Interaction Flow](#api-interaction-flow)
+- [Project Structure](#project-structure)
+
+## Introduction
+This document serves as the foundational technical reference for HBnB Evolution system architecture and design, created as part of Part 1 deliverables. It establishes the complete blueprint for the application development.
+
+### Documentation Scope
+- Comprehensive architecture design using UML standards
+- Detailed business logic layer specification
+- API interaction patterns and data flow
+- Implementation guidelines for development phases
+
+### Main Goals
+- Provide complete visual representation of system architecture using industry-standard UML
+- Document design decisions and business logic implementation with clear rationale
+- Establish reliable reference documentation for development and maintenance teams
+- Ensure consistency and quality across all implementation phases
+
+## High-Level Architecture
+
+### Package Diagram
 ![High-Level Package Diagram](High-Level-Package-Diagram-HBNB.png)
 
-### 1.2 Architectural Pattern Justification
-
-**The Three-Layer Architecture** was selected based on several critical considerations:
-
-**Separation of Concerns**: Each layer has distinct responsibilities, preventing the mixing of presentation logic with business rules or data access code. This separation ensures that changes in one layer have minimal impact on others.
-
-**Maintainability and Scalability**: As HBnB Evolution grows, this architecture allows individual layers to scale independently. For instance, the Presentation Layer can be scaled horizontally to handle increased user traffic without affecting the Business Logic Layer.
-
-**Team Development Efficiency**: Different team members can work on separate layers concurrently, reducing development conflicts and enabling specialized expertise in each domain.
-
-**Technology Flexibility**: The layered approach permits technology stack evolution. Should we decide to replace the web frontend with a mobile-native interface or switch database technologies, the changes remain isolated to their respective layers.
-
-### 1.3 Layer Responsibilities and Interactions
+### Architecture Overview
+The system implements a robust three-layer architecture that separates concerns and promotes maintainability:
 
 **Presentation Layer**
-- **Primary Role**: Serve as the system's external interface, handling all client interactions
-- **Key Components**: RESTful API endpoints, request validation, response formatting, and session management
-- **Design Rationale**: By concentrating HTTP-specific logic in this layer, we ensure that business rules remain transport-agnostic, potentially supporting other protocols in the future
+- Manages all client interactions through RESTful API endpoints
+- Handles HTTP request validation, authentication, and response formatting
+- Provides clean service interfaces for web and mobile clients
 
-**Business Logic Layer** 
-- **Core Function**: Implement the essential business rules, validations, and entity relationships that define HBnB's operational logic
-- **Critical Elements**: Domain models (User, Place, Review, Amenity), business validations, and the Facade pattern implementation
-- **Architectural Significance**: This layer contains the most valuable intellectual property of the application—the business rules that differentiate HBnB in the market
+**Business Logic Layer**
+- Contains the core business rules, validations, and entity models
+- Implements HBNB Facade pattern to simplify interactions between layers
+- Encapsulates all domain-specific logic and operational workflows
 
 **Persistence Layer**
-- **Data Management**: Provide abstracted data access mechanisms that insulate the business logic from storage concerns
-- **Implementation Approach**: Repository pattern with Data Access Objects (DAOs) to encapsulate database operations
-- **Strategic Advantage**: This abstraction enables potential future migration between different storage technologies without impacting business logic
+- Handles all data storage and retrieval operations through Repository pattern
+- Abstracts database operations via Data Access Objects (DAOs)
+- Manages database connections, transactions, and data mapping
 
-### 1.4 Facade Pattern Implementation
+### Design Rationale
+The layered architecture was chosen to ensure:
+- **Maintainability**: Independent evolution and updates to each layer
+- **Testability**: Isolated unit and integration testing capabilities
+- **Scalability**: Horizontal scaling potential for high-traffic components
+- **Flexibility**: Future technology changes without system-wide impact
 
-The **HBNB Facade** serves as a unified entry point to the Business Logic Layer, providing several key benefits:
+## Business Logic Layer
 
-**Simplified Client Interaction**: External components interact with a single, well-defined interface rather than multiple complex subsystems
-
-**Reduced Coupling**: The Presentation Layer depends only on the Facade interface, not on the internal complexity of the business logic
-
-**Centralized Cross-Cutting Concerns**: The Facade can implement consistent logging, security checks, and transaction management across all business operations
-
----
-
-## 2. Business Logic Layer Design
-
-### 2.1 Complete Class Diagram
+### Class Diagram
 ![Business Logic Class Diagram](Business-Logic-Class-Diagram.png)
 
-### 2.2 Core Entity Analysis and Design Rationale
+### Core Entity Specification
 
-**BaseModel Abstract Class**
+**BaseModel**
+- Foundation class providing common functionality across all business entities
+- Attributes: `id` (UUID), `created_at`, `updated_at`
+- Methods: `create()`, `update()`, `delete()`, `to_dict()`
+- Design Purpose: Implements DRY principle and provides consistent audit trail
 
-**Design Philosophy**: DRY (Don't Repeat Yourself) Principle
+**User**
+- Represents system users with complete authentication and authorization
+- Attributes: `first_name`, `last_name`, `email`, `password`, `is_admin`
+- Business Role: Manages user profiles, permissions, and account lifecycle
 
-- **Universal Identifier**: UUID implementation ensures global uniqueness across distributed systems
-- **Audit Trail**: created_at and updated_at timestamps provide essential business intelligence  
-- **Lifecycle Management**: Centralized create/update/delete operations enforce consistent behavior
-- **Serialization Support**: to_dict() method enables clean data transformation for API responses
+**Place**
+- Manages rental property listings with comprehensive location and pricing data
+- Attributes: `title`, `description`, `price`, `latitude`, `longitude`, `owner_id`
+- Methods: `addAmenity()`, `removeAmenity()`, `calculateRating()`
+- Business Function: Property management, availability, and feature handling
 
-**Business Justification**: This abstraction eliminates redundant code across entities and ensures consistent implementation of cross-cutting concerns that are fundamental to enterprise applications.
+**Review**
+- Handles user feedback, ratings, and review system
+- Attributes: `rating` (float), `comment`
+- Business Logic: Rating validation, review moderation, user experience tracking
 
-**User Entity**
+**Amenity**
+- Manages property features and equipment catalog system
+- Attributes: `name`, `description`
+- Business Purpose: Standardized feature management and categorization
 
-**Critical Business Attributes**:
-- **Identity Management**: first_name and last_name support personalization features
-- **Authentication**: email and password enable secure access with industry-standard practices
-- **Authorization Control**: is_admin boolean enables differentiated permission structures
+### Entity Relationships
 
-**Design Decisions**:
-- The separation of regular users and administrators directly supports the business requirement for content moderation and system management capabilities
-- Password storage considerations (though hashing implementation details reside in security layer)
+**User → Place** (Ownership: 1 → 0..*)
+- A user can own zero or multiple rental properties
+- Establishes clear ownership and permission boundaries
 
-**Business Context**: User management forms the foundation of trust and accountability in sharing economy platforms.
+**Place → Review** (Composition: 1 → 0..*)
+- Reviews are intrinsically tied to specific places
+- Ensures data consistency and prevents orphaned reviews
 
-**Place Entity**
+**User → Review** (Association: 1 → 0..*)
+- Users can author multiple reviews across different properties
+- Maintains user reputation and review history
 
-**Property Representation**:
-- **Marketing Elements**: title and description drive user engagement and discovery
-- **Financial Aspect**: price enables the core rental transaction functionality
-- **Location Intelligence**: latitude and longitude support geographic searches and mapping integrations
-- **Ownership Tracking**: owner_id establishes critical accountability and permission structures
+**Place ↔ Amenity** (Many-to-Many: 0..* ↔ 0..*)
+- Flexible association between properties and their features
+- Enables rich search and filtering capabilities
 
-**Advanced Business Logic**:
-- **amenities**: List<Amenity> implements the many-to-many relationship through collection management
-- **calculateRating()**: Method encapsulates the business rule for aggregating review scores
+## API Interaction Flow
 
-**Strategic Importance**: The Place entity represents the primary inventory of the platform and directly drives revenue generation.
+### Sequence Diagrams Specification
+The application implements four core API workflows documented through detailed sequence diagrams:
 
-**Review Entity**
+**User Registration**
+- Complete user onboarding process from initial request to account creation
+- Includes email validation, password security, and profile initialization
+- Handles both success scenarios and error conditions gracefully
 
-**Trust and Reputation System**:
-- **rating**: float enables nuanced evaluation (supports decimal ratings like 4.5 stars)
-- **comment**: string captures qualitative user experiences
+**Place Creation**
+- End-to-end property listing creation workflow
+- Manages owner verification, location data validation, and pricing setup
+- Supports amenity associations and media upload preparation
 
-**Relationship Integrity**:
-- The composition relationship with Place ensures data consistency—reviews cannot exist independently of the places they evaluate
-- Association with User establishes reviewer accountability
+**Review Submission**
+- Comprehensive review creation and rating submission process
+- Validates user-place relationships and rating boundaries
+- Ensures review integrity and spam prevention
 
-**Business Value**: Reviews build the trust framework essential for transaction completion in peer-to-peer marketplaces.
+**Fetching Places List**
+- Advanced search and retrieval operations with filtering
+- Implements pagination, sorting, and related data loading
+- Optimizes performance for large result sets
 
-**Amenity Entity**
+### Interaction Patterns
+All API calls follow consistent interaction patterns:
+- Request validation at presentation layer
+- Business logic execution through facade
+- Data persistence via repository abstraction
+- Response formatting and error handling
 
-**Feature Catalog Management**:
-- **name** and **description** create a searchable, maintainable catalog of property features
-- Many-to-many relationship with Place enables flexible feature assignment without data duplication
+## Project Structure
 
-**Design Advantage**: Centralized amenity management allows for consistent naming, future categorization, and cross-property feature analysis.
+### Implementation Approach
+The project follows an iterative development methodology with clear phase separation:
 
-### 2.3 Relationship Design Analysis
+**Phase 1 - Technical Design** (Current)
+- Complete UML diagram specification
+- Architecture validation and refinement
+- API contract definition
 
-**User → Place Association (1..* to 0..*)**
-- **Cardinality Justification**: A user may own zero or multiple properties, while each property must have exactly one owner
-- **Business Logic**: This relationship enables the core rental marketplace functionality while maintaining clear ownership accountability
+**Phase 2 - Core Development**
+- Database schema implementation based on business entities
+- Repository pattern and data access layer
+- Business logic integration and testing
 
-**User → Review Association (1 to 0..*)**
-- **Design Rationale**: Users may write multiple reviews, establishing their reputation within the community
-- **Data Integrity**: The relationship preserves review authorship even if user details change
+**Phase 3 - API Implementation**
+- RESTful endpoint development
+- Authentication and authorization system
+- Comprehensive testing suite
 
-**Place → Review Composition (1 to 0..*)**
-- **Architectural Decision**: Composition rather than aggregation because reviews have no meaningful existence independent of their associated place
-- **Business Implication**: Place deletion cascades to reviews, maintaining database consistency and preventing orphaned content
+### Development Standards
+- **Code Organization**: Clear separation following architecture layers
+- **Documentation**: Inline code documentation with API specifications
+- **Testing**: Multi-layer testing strategy (unit, integration, API)
+- **Version Control**: Feature branch workflow with code review
 
-**Place ↔ Amenity Many-to-Many Association (0..* to 0..*)**
-- **Implementation Approach**: Direct collection management within Place entity with addAmenity() and removeAmenity() methods
-- **Scalability Consideration**: For high-volume scenarios, this could evolve into an explicit association class with additional metadata
+### Quality Assurance
+- Architecture review and design validation
+- Code quality metrics and static analysis
+- Performance benchmarking and optimization
+- Security assessment and vulnerability testing
 
-### 2.4 Method Design and Business Logic Encapsulation
-
-**BaseModel Method Strategy**
-- **create()**: Centralizes object initialization with proper UUID generation and audit timestamp setting
-- **update()**: Ensures consistent updated_at timestamp management across all entities
-- **to_dict()**: Provides uniform serialization for API responses and caching layers
-
-**Place Business Methods**
-- **addAmenity()/removeAmenity()**: Encapsulate the complexity of managing many-to-many relationships
-- **calculateRating()**: Implements the business rule for aggregating and weighting review scores
-
-**Review Management Methods**
-- **editReview()**: Supports user modifications while potentially maintaining edit history for integrity
-
----
-
-## 3. API Interaction Flow Design
-
-### 3.1 Sequence Diagram Strategy
-
-The four selected API calls represent the core user journey through the HBnB platform:
-
-**User Registration Sequence**
-- **Business Significance**: Onboarding new users to grow the platform ecosystem
-- **Technical Complexity**: Password hashing, email validation, and profile initialization
-- **Data Flow**: Presentation → Facade → User Model → Repository → Database
-
-**Place Creation Workflow**  
-- **Business Criticality**: Expanding property inventory for rental marketplace
-- **Validation Requirements**: Location validation, price sanity checks, owner verification
-- **Integration Points**: Potential geocoding services, image storage initialization
-
-**Review Submission Process**
-- **Trust Building**: Core mechanism for establishing platform credibility
-- **Business Rules**: Rating validation, single-review-per-stay enforcement, spam prevention
-- **Data Relationships**: Complex coordination between User, Place, and Review entities
-
-**Place Search and Retrieval**
-- **Performance Considerations**: Pagination, filtering, sorting, and geographical queries
-- **User Experience**: Response time optimization for browse-heavy usage patterns
-- **Caching Strategy**: Potential implementation of search result caching
-
-### 3.2 Cross-Layer Communication Patterns
-
-The sequence diagrams will illustrate several key architectural patterns:
-
-**Facade Coordination**: How the HBNB Facade orchestrates complex operations across multiple business entities
-
-**Error Handling**: Consistent error propagation from database constraints through to user-friendly API responses
-
-**Transaction Management**: Data consistency approaches for multi-step operations
-
-**Validation Layering**: How input validation is distributed across presentation, business, and persistence layers
+## Author
+**Sedra Ramarosaona** - [GitHub Profile Link]
+**Sedra Ramarosaona** - [GitHub Profile Link]
+**Sedra Ramarosaona** - [GitHub Profile Link]
 
 ---
 
-## 4. Implementation Readiness Assessment
-
-### 4.1 Architecture Validation
-
-**Strengths of the Current Design**
-- Clear separation of concerns supporting maintainability
-- Comprehensive entity relationships covering all business requirements
-- Flexible many-to-many implementation allowing future enhancement
-- Audit trail support for business intelligence and compliance
-
-**Considerations for Future Evolution**
-- Pagination strategy for large result sets in Place listings
-- Caching layer positioning for performance optimization
-- Full-text search integration for place discovery
-- Notification system for user engagements
-
-### 4.2 Next Phase Implementation Priorities
-
-**Phase 2 Priorities**
-1. Database schema design reflecting the business entities and relationships
-2. Repository pattern implementation with concrete data access logic
-3. HBNB Facade development with transaction management
-4. Basic API endpoint implementation for core operations
-
-**Phase 3 Considerations**
-1. Authentication and authorization integration
-2. Advanced search and filtering capabilities
-3. Image storage and management for property listings
-4. Review moderation and spam detection systems
-
----
-
-## 5. Conclusion
-
-This technical documentation establishes a robust foundation for HBnB Evolution development. The three-layer architecture provides the structural integrity needed for scalable growth, while the detailed business logic design captures the essential domain complexity of a modern rental platform.
-
-The class diagram represents a careful balance between normalization for data integrity and pragmatic design for development efficiency. The relationship structures support both current business requirements and anticipated future enhancements.
-
-As the project progresses into implementation phases, this documentation will serve as the authoritative reference for architectural decisions, ensuring consistency and alignment with business objectives across all development activities.
-
----
-
-*Technical Documentation - HBnB Evolution*  
-*Architecture Review Completed: [Date]*  
-*Next Review Scheduled: Phase 2 Implementation Kickoff*
+*HBnB Evolution - Part 1 Technical Documentation*  
+*Document Version: 1.0 | Comprehensive Architecture Specification*  
+*Holberton School - 2025*
