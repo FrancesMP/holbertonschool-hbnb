@@ -1,7 +1,5 @@
 # HBnB Evolution - Technical Documentation
 
-**View Styled Version**: [Click here for enhanced version](https://htmlpreview.github.io/?https://github.com/FrancesMP/holbertonschool-hbnb/blob/main/part1/documentation.html)
-
 
 This document contains the complete technical documentation for HBnB Evolution project — Part 1 of Holberton School curriculum. It provides all required UML diagrams and architectural specifications for the application's foundation.
 
