@@ -1,6 +1,5 @@
 # HBnB Evolution - Technical Documentation
 
-
 This document contains the complete technical documentation for HBnB Evolution project — Part 1 of Holberton School curriculum. It provides all required UML diagrams and architectural specifications for the application's foundation.
 
 ## Summary
@@ -112,22 +111,26 @@ The layered architecture was chosen to ensure:
 ### Sequence Diagrams Specification
 The application implements four core API workflows documented through detailed sequence diagrams:
 
-**User Registration**
+#### User Registration
+![User Registration Sequence Diagram](user-registration-sequence.png)
 - Complete user onboarding process from initial request to account creation
 - Includes email validation, password security, and profile initialization
 - Handles both success scenarios and error conditions gracefully
 
-**Place Creation**
+#### Place Creation
+![Place Creation Sequence Diagram](place-creation-sequence.png)
 - End-to-end property listing creation workflow
 - Manages owner verification, location data validation, and pricing setup
 - Supports amenity associations and media upload preparation
 
-**Review Submission**
+#### Review Submission
+![Review Submission Sequence Diagram](review-submission-sequence.png)
 - Comprehensive review creation and rating submission process
 - Validates user-place relationships and rating boundaries
 - Ensures review integrity and spam prevention
 
-**Fetching Places List**
+#### Fetching Places List
+![Fetch Places Sequence Diagram](fetch-places-sequence.png)
 - Advanced search and retrieval operations with filtering
 - Implements pagination, sorting, and related data loading
 - Optimizes performance for large result sets
@@ -178,4 +181,5 @@ The project follows an iterative development methodology with clear phase separa
 
 ---
 
-*HBnB  - Part 1 Technical Documentation*  
+*HBnB Evolution - Part 1 Technical Documentation*  
+*Document Version: 1.0 | Complete UML Specification*
