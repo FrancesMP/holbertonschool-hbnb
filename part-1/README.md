@@ -177,7 +177,7 @@ The project follows an iterative development methodology with clear phase separa
 ## Author
 **Sedra Ramarosaona** - [GitHub Profile Link](https://github.com/SedraR78)
 **Frances Mascarenhas Palmer** - [GitHub Profile Link](https://github.com/FrancesMP)
-**Bryan Kotro Mbomba** - [GitHub Profile Link]
+**Bryan Kotro Mbomba** - 
 
 ---
 
