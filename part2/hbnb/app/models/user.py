@@ -11,8 +11,17 @@ class User(BaseModel):
         self._validate()
         
     def _validate(self):
-            """Validate user attributes"""
-    if len(self.first_name) > 50:
-        raise ValueError("First name too long")
-    if len(self.last_name) > 50:
-        raise ValueError("Last name too long")
+        
+        """Validate user attributes"""
+        if len(self.first_name) > 50:
+            raise ValueError("First name too long")
+        if len(self.last_name) > 50:
+            raise ValueError("Last name too long")
+        """ checking if there is @  email"""
+        if "@" not in self.email:
+            raise ValueError("Invalid email format")
+        
+        """check if after the @ we have a point (the string count like 1 elements so -1)"""
+        domaine = self.email.split("@")[-1]  #
+        if "." not in domaine:
+            raise ValueError("Email must contain domain with .")

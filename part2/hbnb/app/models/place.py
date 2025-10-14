@@ -1,25 +1,23 @@
 from app.models import BaseModel
 
 class Place(BaseModel):
-    def __init__(self,title,description,price,latitude,longitude,owner_id):
+    def __init__(self,title,description,price,latitude,longitude,owner):
         super().__init__()
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner_id = owner_id    
+        self.owner = owner   
         self.amenities = []  
         self.reviews = []   
 
 
-
-
     def add_amenity(self, amenity):
-            
+            """Add a review to the place."""
             self.amenities.append(amenity)
 
 
     def add_review(self, review):
-            
+            """Add an amenity to the place."""
             self.reviews.append(review)
