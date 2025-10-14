@@ -10,9 +10,9 @@ class User(BaseModel):
 
         self._validate()
         
-        def _validate(self):
+    def _validate(self):
             """Validate user attributes"""
-        if len(self.first_name) > 50:
-            raise ValueError("First name too long")
-        if len(self.last_name) > 50:
-            raise ValueError("Last name too long")
+    if len(self.first_name) > 50:
+        raise ValueError("First name too long")
+    if len(self.last_name) > 50:
+        raise ValueError("Last name too long")
