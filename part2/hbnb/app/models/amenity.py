@@ -6,8 +6,9 @@ class Amenity(BaseModel):
             self.name = name
 
             self._validate()
-        def _validate(self): 
-              
-            if len(self.first_name) > 50:
-                raise ValueError("Amenity too long")
-
+        def _validate(self):
+            """Validate amenity attributes"""
+            if len(self.name) > 50:  
+                raise ValueError("Amenity name too long")
+            if not self.name or len(self.name.strip()) == 0:
+                raise ValueError("Amenity name cannot be empty")

@@ -16,4 +16,30 @@ def create_app():
         def get(self):
             return {"message": "Hello from HBNB API 🚀"}
 
+    """Test Route"""
+    @app.route('/api/v1/test-models')
+    def test_models_route():
+        from .models import User, Place, Review, Amenity
+        
+        """create data for testing with postman """
+        user = User("Postman", "Test", "postman@test.com")
+        place = Place("Test Villa", "Luxury villa", 300.0, 40.0, -70.0, user)
+        review = Review(5, "Perfect for testing!")
+        amenity = Amenity("Swimming Pool")
+        
+        place.add_review(review)
+        place.add_amenity(amenity)
+        
+        return {
+            "message": "🎉 All models work with Postman!",
+            "user": user.to_dict(),
+            "place": place.to_dict(),
+            "review": review.to_dict(),
+            "amenity": amenity.to_dict()
+        }
+    
+    return app
+    
+    
+    
     return app

@@ -1,12 +1,12 @@
-from app.models import BaseModel 
+from .base_model import BaseModel
 
 class Review(BaseModel):
-    def __init__(self,rating,comment):
+    def __init__(self, rating, comment):
         super().__init__()
         self.rating = rating
         self.comment = comment
-
-
+        self._validate()  
+        
     def _validate(self):
         """Validate review attributes"""
         if not (1 <= self.rating <= 5):
