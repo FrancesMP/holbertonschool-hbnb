@@ -12,10 +12,10 @@ class Place(BaseModel):
         self.amenities = []  
         self.reviews = []   
 
-        self._validate()  # ✅ AJOUTÉ
+        self._constraints()  
     
-    def _validate(self):
-        """Validate place attributes"""
+    def _constraints(self):
+        """Ensure Place meets all business constraints"""
         if len(self.title) > 100:
             raise ValueError("Title too long")
         if self.price < 0:

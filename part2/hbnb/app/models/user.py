@@ -8,11 +8,11 @@ class User(BaseModel):
         self.email = email
         self.is_admin = is_admin
 
-        self._validate()
+        self._constraints()
         
-    def _validate(self):
+    def _constraints(self):
         
-        """Validate user attributes"""
+        """Ensure User meets all business constraints"""
         if len(self.first_name) > 50:
             raise ValueError("First name too long")
         if len(self.last_name) > 50:

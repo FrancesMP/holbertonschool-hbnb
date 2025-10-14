@@ -9,12 +9,12 @@ def create_app():
     # Additional namespaces for places, reviews, and amenities will be added later
     @app.route('/')
     def index():
-        return "Welcome to HBNB API 🚀"
+        return "Welcome to HBNB API "
     
     @api.route('/hello')
     class HelloResource(Resource):
         def get(self):
-            return {"message": "Hello from HBNB API 🚀"}
+            return {"message": "Hello from HBNB API "}
 
     """Test Route"""
     @app.route('/api/v1/test-models')
@@ -31,7 +31,7 @@ def create_app():
         place.add_amenity(amenity)
         
         return {
-            "message": "🎉 All models work with Postman!",
+            "message": " All models work with Postman!",
             "user": user.to_dict(),
             "place": place.to_dict(),
             "review": review.to_dict(),
