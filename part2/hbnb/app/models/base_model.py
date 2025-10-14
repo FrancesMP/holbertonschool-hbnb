@@ -18,5 +18,19 @@ class BaseModel:
                 setattr(self, key, value)
         self.save()  # Update the updated_at timestamp
 
-    def create(self):
+    @classmethod
+    def create(cls, **kwargs):
+        instance = cls(**kwargs)
+        return instance
+
+    def to_dict(self):
+        """Convert instance to dictionary for JSON serialization"""
+        model_dict = self.__dict__.copy()
+        model_dict['__class__'] = self.__class__.__name__
+        model_dict['created_at'] = self.created_at.isoformat()
+        model_dict['updated_at'] = self.updated_at.isoformat()
+        return model_dict
+        
+
+    def delete(self): 
         pass
