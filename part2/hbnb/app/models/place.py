@@ -12,12 +12,25 @@ class Place(BaseModel):
         self.amenities = []  
         self.reviews = []   
 
-
+        self._validate()  # ✅ AJOUTÉ
+    
+    def _validate(self):
+        """Validate place attributes"""
+        if len(self.title) > 100:
+            raise ValueError("Title too long")
+        if self.price < 0:
+            raise ValueError("Price must be positive")
+        if not (-90 <= self.latitude <= 90):
+            raise ValueError("Latitude must be between -90 and 90")
+        if not (-180 <= self.longitude <= 180):
+            raise ValueError("Longitude must be between -180 and 180")
+        
+        
     def add_amenity(self, amenity):
-            """Add a review to the place."""
+            """Add an amentiy to the place."""
             self.amenities.append(amenity)
 
 
     def add_review(self, review):
-            """Add an amenity to the place."""
+            """Add a review to the place."""
             self.reviews.append(review)
