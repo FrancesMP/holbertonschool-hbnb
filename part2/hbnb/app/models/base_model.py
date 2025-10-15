@@ -29,6 +29,16 @@ class BaseModel:
         model_dict['__class__'] = self.__class__.__name__
         model_dict['created_at'] = self.created_at.isoformat()
         model_dict['updated_at'] = self.updated_at.isoformat()
+
+        if 'amenities' in model_dict:
+            model_dict['amenities'] = [amenity.to_dict() for amenity in self.amenities]
+    
+        if 'reviews' in model_dict:
+            model_dict['reviews'] = [review.to_dict() for review in self.reviews]
+    
+        if 'owner' in model_dict and hasattr(self.owner, 'to_dict'):
+            model_dict['owner'] = self.owner.to_dict()
+        
         return model_dict
         
 
