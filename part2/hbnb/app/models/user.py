@@ -1,4 +1,4 @@
-from app.models import BaseModel
+from .base_model import BaseModel
 
 class User(BaseModel):
     def __init__(self,first_name,last_name,email,is_admin=False):
@@ -7,7 +7,6 @@ class User(BaseModel):
         self.last_name = last_name
         self.email = email
         self.is_admin = is_admin
-
         self._constraints()
         
     def _constraints(self):
