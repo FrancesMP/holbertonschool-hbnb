@@ -1,5 +1,5 @@
 from app.persistence.repository import InMemoryRepository
-
+from app.models.place import Place
 class HBnBFacade:
     def __init__(self):
         self.user_repo = InMemoryRepository()
@@ -12,10 +12,20 @@ class HBnBFacade:
         # Logic will be implemented in later tasks
         pass
 
+    def create_place(self, place_data):
+        """creating instance"""
+        place = Place(**place_data)
+        """saving instance"""
+        self.place_repo.add(place)
+        return place    
+    
     # Placeholder method for fetching a place by ID
     def get_place(self, place_id):
-        # Logic will be implemented in later tasks
-        pass
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        return place
+        
 
     def create_review(self, review_data):
     # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
