@@ -21,7 +21,7 @@ class ReviewList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new review"""
-        review_date = api.payload
+        review_data = api.payload
 
         try: 
             new_review  = facade.create_review(review_data)
