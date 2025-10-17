@@ -1,5 +1,8 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+from ...services.facade import HBnBFacade
+
+facade = HBnBFacade()
+
 
 api = Namespace('reviews', description='Review operations')
 
@@ -18,14 +21,19 @@ class ReviewList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new review"""
-        # Placeholder for the logic to register a new review
-        pass
+        review_date = api.payload
+
+        try: 
+            new_review  = facade.create_review(review_data)
+            return new_review.to_dict(), 201
+        except ValueError as e:
+            return {"error": str(e)}, 400
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
         """Retrieve a list of all reviews"""
-        # Placeholder for logic to return a list of all reviews
-        pass
+        reviews = facade.get_all_reviews()
+        return [reviews.to_dict() for review in reviews], 200
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
@@ -33,7 +41,10 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def get(self, review_id):
         """Get review details by ID"""
-        # Placeholder for the logic to retrieve a review by ID
+        review = facade.get_review(review_id)
+        if not review:
+            return {"error": "Review not found"}, 404
+        return review.to_dict(), 200
         pass
 
     @api.expect(review_model)

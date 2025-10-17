@@ -1,5 +1,8 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+
+
+from ...services.facade import HBnBFacade
+facade = HBnBFacade()
 
 api = Namespace('places', description='Place operations')
 
@@ -27,6 +30,14 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
+"""TEST for users """
+from ...models.user import User
+if not facade.user_repo.get_all():  # Si pas de users
+    test_user = User("Test", "User", "test@example.com")
+    facade.user_repo.add(test_user)
+    print(f"✅ User de test créé: {test_user.id}")
+
+
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
@@ -34,17 +45,17 @@ class PlaceList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new place"""
-        # Placeholder for the logic to register a new place
+        """Get Data sent by the client : """
         place_data = api.payload
         new_place = facade.create_place(place_data)
-        return new_place.to_dict
+        return new_place.to_dict()
         
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
-        # Placeholder for logic to return a list of all places
-        pass
+        places = facade.get_all_places()
+        return [place.to_dict() for place in places ], 200 
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
@@ -54,7 +65,7 @@ class PlaceResource(Resource):
         """Get place details by ID"""
         place = facade.get_place(place_id)
         if not place :
-            return {"error":" Place not found "}, 404
+            return {"error": "Place not found "}, 404
         
         return place.to_dict(), 200
 
@@ -64,5 +75,18 @@ class PlaceResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update a place's information"""
-        # Placeholder for the logic to update a place by ID
-        pass
+        place_data = api.payload
+
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+        
+        try:
+            """update with new data"""
+            facade.update_place(place_id, place_data)
+
+            updated_place = facade.get_place(place_id)
+            return updated_place.to_dict(), 200
+        
+        except Exception as e:
+            return {"error": str(e)}, 400

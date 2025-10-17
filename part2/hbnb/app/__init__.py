@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restx import Api, Resource
 
-from app.api.v1.places import api as places_ns 
+from .api.v1.places import api as places_ns 
 
 def create_app():
     app = Flask(__name__)
