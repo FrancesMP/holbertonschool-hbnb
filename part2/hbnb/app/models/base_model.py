@@ -30,9 +30,12 @@ class BaseModel:
         model_dict['created_at'] = self.created_at.isoformat()
         model_dict['updated_at'] = self.updated_at.isoformat()
 
-        if 'amenities' in model_dict:
-            model_dict['amenities'] = [amenity.to_dict() for amenity in self.amenities]
-    
+        if hasattr(self, 'amenities'):
+            if all(hasattr(amenity, 'to_dict') for amenity in self.amenities):
+                model_dict['amenities'] = [amenity.to_dict() for amenity in self.amenities]
+            else:
+                model_dict['amenities'] = self.amenities  
+                
         if 'reviews' in model_dict:
             model_dict['reviews'] = [review.to_dict() for review in self.reviews]
     

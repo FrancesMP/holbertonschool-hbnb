@@ -30,13 +30,6 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
-"""TEST for users """
-from ...models.user import User
-if not facade.user_repo.get_all():  # Si pas de users
-    test_user = User("Test", "User", "test@example.com")
-    facade.user_repo.add(test_user)
-    print(f"✅ User de test créé: {test_user.id}")
-
 
 @api.route('/')
 class PlaceList(Resource):

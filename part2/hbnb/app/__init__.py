@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restx import Api, Resource
 
+from .api.v1.reviews import api as reviews_ns 
 from .api.v1.places import api as places_ns 
 
 def create_app():
@@ -11,6 +12,7 @@ def create_app():
     # Additional namespaces for places, reviews, and amenities will be added later
 
     api.add_namespace(places_ns, path='/api/v1/places')
+    api.add_namespace(reviews_ns, path='/api/v1/reviews')
 
 
     @app.route('/')

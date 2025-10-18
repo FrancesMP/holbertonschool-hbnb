@@ -11,25 +11,53 @@ class HBnBFacade:
 
     # === PLACE METHODS ===
     def create_place(self, place_data):
-        """Create a new place"""
-        owner_id = place_data['owner_id']
-        owner = self.user_repo.get(owner_id)
-        if not owner:
-            raise ValueError("Owner user does not exist")
-    
-        for amenity_id in place_data.get('amenities', []):
-            if not self.amenity_repo.get(amenity_id):
-                raise ValueError(f"Amenity {amenity_id} does not exist")
-    
-        place_data_clean = place_data.copy()
-        place_data_clean['owner'] = owner
-        del place_data_clean['owner_id']
-        del place_data_clean['amenities']
         
-        place = Place(**place_data_clean)
-        self.place_repo.add(place)
-        return place
+        # # """Create a new place"""
+        # # owner_id = place_data['owner_id']
+        # # owner = self.user_repo.get(owner_id)
+        # # if not owner:
+        # #     raise ValueError("Owner user does not exist")
     
+        # # for amenity_id in place_data.get('amenities', []):
+        # #     if not self.amenity_repo.get(amenity_id):
+        # #         raise ValueError(f"Amenity {amenity_id} does not exist")
+    
+        # place_data_clean = place_data.copy()
+        # # place_data_clean['owner'] = owner
+        # # del place_data_clean['owner_id']
+        # # del place_data_clean['amenities']
+        
+        # place = Place(**place_data_clean)
+        # self.place_repo.add(place)
+        # return place
+
+        print("🔍 DEBUG 1: create_place appelé")
+    
+        try:
+            place_data_clean = place_data.copy()
+            if 'owner_id' in place_data_clean:
+                place_data_clean['owner'] = place_data_clean['owner_id']
+                del place_data_clean['owner_id']
+        
+        # ⬇️ ENLÈVE amenities car pas dans le constructeur
+            place_data_clean.pop('amenities', None)
+        
+            print("🔍 DEBUG 3: place_data_clean =", place_data_clean)
+        
+            place = Place(**place_data_clean)
+        # ⬇️ AJOUTE LES AMENITIES APRÈS si besoin
+        # for amenity_id in place_data.get('amenities', []):
+        #     place.add_amenity(amenity_id)
+            
+            self.place_repo.add(place)
+            return place
+        
+        except Exception as e:
+            print("❌ ERREUR:", e)
+            import traceback
+            print("❌ TRACEBACK:", traceback.format_exc())
+            raise
+        
     def get_place(self, place_id):
         """Get place by ID"""
         return self.place_repo.get(place_id)
@@ -48,22 +76,20 @@ class HBnBFacade:
 
     # === REVIEW METHODS ===
     def create_review(self, review_data):
-        """Create a new review"""
-        user = self.user_repo.get(review_data['user_id'])
-        if not user:
-            raise ValueError("User does not exist")
+        try:
+           
+            review_data_clean = review_data.copy()
+           
+            rating = review_data_clean['rating']
+            if not (1 <= rating <= 5):
+                raise ValueError("Rating must be between 1 and 5")
             
-        place = self.place_repo.get(review_data['place_id'])
-        if not place:
-            raise ValueError("Place does not exist")
-            
-        rating = review_data['rating']
-        if not (1 <= rating <= 5):
-            raise ValueError("Rating must be between 1 and 5")
-            
-        review = Review(**review_data)
-        self.review_repo.add(review)
-        return review
+            review = Review(**review_data_clean)
+            self.review_repo.add(review)
+            return review
+        except Exception as e:
+            print("❌ Erreur create_review:", e)
+            raise
     
     def get_review(self, review_id):
         """Get review by ID"""
