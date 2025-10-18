@@ -69,4 +69,4 @@ class AmenityResource(Resource):
             amenity.update(data)
             return amenity.to_dict(), 200
         except ValueError as e:
-            return {'error': str(e)}, 400
+            return {'error': str(e)}, 40X
