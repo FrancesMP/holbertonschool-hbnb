@@ -1,8 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 
 
-from ...services.facade import HBnBFacade
-facade = HBnBFacade()
+from hbnb.app.services import facade
+
 
 api = Namespace('places', description='Place operations')
 
@@ -36,6 +36,7 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    
     def post(self):
         """Register a new place"""
         place_data = api.payload
@@ -46,7 +47,6 @@ class PlaceList(Resource):
             return {"error": str(e)}, 400
         except Exception as e:
             return {"error": "Internal server error"}, 500
-        
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -59,13 +59,25 @@ class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get place details by ID"""
-        place = facade.get_place(place_id)
-        if not place :
-            return {"error": "Place not found "}, 404
-        
-        return place.to_dict(), 200
+        """Get all reviews for a specific place"""
+        try:
+            reviews = facade.get_reviews_by_place(place_id)
+            return [review.to_dict() for review in reviews], 200
+        except ValueError as e:
+            return {"error": str(e)}, 404
 
+@api.route('/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a specific place"""
+        try:
+            reviews = facade.get_reviews_by_place(place_id)
+            return [review.to_dict() for review in reviews], 200
+        except ValueError as e:
+            return {"error": str(e)}, 404
+        
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')

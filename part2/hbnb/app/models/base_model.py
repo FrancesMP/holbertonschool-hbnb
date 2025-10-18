@@ -36,11 +36,12 @@ class BaseModel:
             else:
                 model_dict['amenities'] = self.amenities  
                 
-        if 'reviews' in model_dict:
+        if hasattr(self, 'reviews'):
             model_dict['reviews'] = [review.to_dict() for review in self.reviews]
     
-        if 'owner' in model_dict and hasattr(self.owner, 'to_dict'):
+        if hasattr(self, 'owner') and hasattr(self.owner, 'to_dict'):
             model_dict['owner'] = self.owner.to_dict()
+    
         
         return model_dict
         
