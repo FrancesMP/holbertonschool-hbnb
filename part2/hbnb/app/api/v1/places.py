@@ -45,10 +45,14 @@ class PlaceList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new place"""
-        """Get Data sent by the client : """
         place_data = api.payload
-        new_place = facade.create_place(place_data)
-        return new_place.to_dict()
+        try:
+            new_place = facade.create_place(place_data)
+            return new_place.to_dict(), 201  
+        except ValueError as e:
+            return {"error": str(e)}, 400
+        except Exception as e:
+            return {"error": "Internal server error"}, 500
         
 
     @api.response(200, 'List of places retrieved successfully')
@@ -75,18 +79,11 @@ class PlaceResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update a place's information"""
-        place_data = api.payload
-
-        place = facade.get_place(place_id)
-        if not place:
-            return {"error": "Place not found"}, 404
-        
         try:
-            """update with new data"""
-            facade.update_place(place_id, place_data)
-
-            updated_place = facade.get_place(place_id)
+            place_data = api.payload
+            updated_place = facade.update_place(place_id, place_data)  # ⬅️ Retourne direct l'updated
             return updated_place.to_dict(), 200
-        
-        except Exception as e:
+        except ValueError as e:
+            if "not found" in str(e).lower():
+                return {"error": "Place not found"}, 404
             return {"error": str(e)}, 400
