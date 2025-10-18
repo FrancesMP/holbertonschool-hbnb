@@ -1,70 +1,54 @@
-# This is our AMENITIES COUNTER (like a toy store counter)
-
 from flask_restx import Namespace, Resource, fields
-from app.services.facade import HBnBFacade
-from app.models.amenity import Amenity
+from hbnb.app.services.facade import HBnBFacade
+from hbnb.app.models.amenity import Amenity
 
-# Give our counter a name: "amenities"
+# Create namespace for amenities
 api = Namespace('amenities', description='Amenity operations')
 
-# Connect to our storage room
+# Connect to business logic
 facade = HBnBFacade()
 
-# What information do we need about an amenity?
+# Define the data structure for amenities
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Amenity name')
 })
 
-# COUNTER 1: For listing amenities and adding new ones
+# Handle /api/v1/amenities/ (create and list)
 @api.route('/')
 class AmenityList(Resource):
-    
-    # ADD NEW AMENITY button
     @api.expect(amenity_model)
     def post(self):
-        """Add a new amenity"""
-        # Get the amenity name from the request
+        """Create a new amenity"""
         data = api.payload
-        
         try:
-            # Create the new amenity
             amenity = Amenity(name=data['name'])
-            # Put it in our storage
             facade.amenity_repo.add(amenity)
-            # Tell them we succeeded
             return amenity.to_dict(), 201
         except ValueError as e:
-            # Tell them if there's a problem
             return {'error': str(e)}, 400
     
-    # SEE ALL AMENITIES button  
     def get(self):
-        """Show all amenities"""
+        """Get all amenities"""
         amenities = facade.amenity_repo.get_all()
         return [amenity.to_dict() for amenity in amenities], 200
 
-# COUNTER 2: For looking at one specific amenity
+# Handle /api/v1/amenities/<amenity_id> (get one and update)
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
-    
-    # SEE ONE AMENITY button
     def get(self, amenity_id):
-        """Look at one specific amenity"""
+        """Get a specific amenity by ID"""
         amenity = facade.amenity_repo.get(amenity_id)
         if amenity:
             return amenity.to_dict(), 200
         return {'error': 'Amenity not found'}, 404
     
-    # CHANGE AMENITY NAME button
     @api.expect(amenity_model)
     def put(self, amenity_id):
-        """Change an amenity's name"""
+        """Update an amenity"""
         data = api.payload
         amenity = facade.amenity_repo.get(amenity_id)
-        
         if not amenity:
             return {'error': 'Amenity not found'}, 404
-            
         try:
             amenity.update(data)
             return amenity.to_dict(), 200
