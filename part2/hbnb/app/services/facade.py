@@ -1,6 +1,7 @@
 from ..models.place import Place 
 from ..models.review import Review
 from ..models.amenity import Amenity
+from ..models.user import User
 from ..persistence.repository import InMemoryRepository
 
 class HBnBFacade:
@@ -10,7 +11,29 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
-    # === AMENITY METHODS ===
+    # === USER METHODS ===
+    def create_user(self, user_data):
+        user = User(**user_data)
+        self.user_repo.add(user)
+        return user
+    
+    def get_user(self, user_id):
+        return self.user_repo.get(user_id)
+    
+    def get_all_users(self):
+        return self.user_repo.get_all()
+
+    def update_user(self, user_id, user_data):
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError("User not found")
+        user.update(user_data)
+        return user
+
+    def get_user_by_email(self, email):
+        return self.user_repo.get_by_attribute('email', email)
+    
+        # === AMENITY METHODS ===
     def create_amenity(self, amenity_data):
         """Create a new amenity"""
         amenity = Amenity(**amenity_data)
@@ -37,6 +60,10 @@ class HBnBFacade:
     # === PLACE METHODS ===
     def create_place(self, place_data):
         """Create a new place with amenities"""
+        owner_id = place_data.get('owner_id')
+        if owner_id and not self.get_user(owner_id):
+            raise ValueError("Owner user does not exist")
+        
         place_data_clean = place_data.copy()
         if 'owner_id' in place_data_clean:
             place_data_clean['owner'] = place_data_clean['owner_id']
@@ -73,6 +100,10 @@ class HBnBFacade:
     # === REVIEW METHODS ===
     def create_review(self, review_data):
         """Create a new review"""
+        user_id = review_data.get('user_id')
+        if user_id and not self.get_user(user_id):
+            raise ValueError("User does not exist")
+        
         rating = review_data['rating']
         if not (1 <= rating <= 5):
             raise ValueError("Rating must be between 1 and 5")

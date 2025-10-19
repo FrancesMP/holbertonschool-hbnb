@@ -1,8 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-
-
 from hbnb.app.services import facade
-
 
 api = Namespace('places', description='Place operations')
 
@@ -30,13 +27,11 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
-
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
-    
     def post(self):
         """Register a new place"""
         place_data = api.payload
@@ -52,19 +47,33 @@ class PlaceList(Resource):
     def get(self):
         """Retrieve a list of all places"""
         places = facade.get_all_places()
-        return [place.to_dict() for place in places ], 200 
+        return [place.to_dict() for place in places], 200 
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get all reviews for a specific place"""
+        """Get place details by ID"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+        return place.to_dict(), 200
+
+    @api.expect(place_model)
+    @api.response(200, 'Place updated successfully')
+    @api.response(404, 'Place not found')
+    @api.response(400, 'Invalid input data')
+    def put(self, place_id):
+        """Update a place's information"""
         try:
-            reviews = facade.get_reviews_by_place(place_id)
-            return [review.to_dict() for review in reviews], 200
+            place_data = api.payload
+            updated_place = facade.update_place(place_id, place_data)
+            return updated_place.to_dict(), 200
         except ValueError as e:
-            return {"error": str(e)}, 404
+            if "not found" in str(e).lower():
+                return {"error": "Place not found"}, 404
+            return {"error": str(e)}, 400
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
@@ -77,18 +86,3 @@ class PlaceReviewList(Resource):
             return [review.to_dict() for review in reviews], 200
         except ValueError as e:
             return {"error": str(e)}, 404
-        
-    @api.expect(place_model)
-    @api.response(200, 'Place updated successfully')
-    @api.response(404, 'Place not found')
-    @api.response(400, 'Invalid input data')
-    def put(self, place_id):
-        """Update a place's information"""
-        try:
-            place_data = api.payload
-            updated_place = facade.update_place(place_id, place_data)  # ⬅️ Retourne direct l'updated
-            return updated_place.to_dict(), 200
-        except ValueError as e:
-            if "not found" in str(e).lower():
-                return {"error": "Place not found"}, 404
-            return {"error": str(e)}, 400
