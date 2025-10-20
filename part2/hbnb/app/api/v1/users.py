@@ -44,3 +44,11 @@ class UserResource(Resource):
             return user.to_dict(), 200
         except ValueError as e:
             return {'error': str(e)}, 400
+        
+    def delete(self, user_id):
+        """Delete a user by ID"""
+        try:
+            result = facade.delete_user(user_id)
+            return result, 200
+        except ValueError as e:
+            return {'error': str(e)}, 404

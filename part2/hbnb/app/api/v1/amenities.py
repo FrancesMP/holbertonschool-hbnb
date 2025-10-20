@@ -48,3 +48,11 @@ class AmenityResource(Resource):
             if "not found" in str(e).lower():
                 return {'error': 'Amenity not found'}, 404
             return {'error': str(e)}, 400
+    
+    def delete(self, amenity_id):
+        """Delete an amenity by ID"""
+        try:
+            result = facade.delete_amenity(amenity_id)
+            return result, 200
+        except ValueError as e:
+            return {'error': str(e)}, 404

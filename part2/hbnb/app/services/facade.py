@@ -13,10 +13,24 @@ class HBnBFacade:
 
     # === USER METHODS ===
     def create_user(self, user_data):
-        user = User(**user_data)
-        self.user_repo.add(user)
-        return user
-    
+        """Create a new user with validation"""
+        try:
+
+            required_fields = ['first_name', 'last_name', 'email']
+            for field in required_fields:
+                if field not in user_data:
+                    raise ValueError(f"Missing required field: {field}")
+                if not user_data[field]:
+                    raise ValueError(f"{field} cannot be empty")
+        
+            user = User(**user_data)
+            self.user_repo.add(user)
+            return user
+        
+        except ValueError as e:
+            raise ValueError(str(e))
+        except TypeError as e:
+            raise ValueError("Missing required fields")
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
     
@@ -150,3 +164,56 @@ class HBnBFacade:
             raise ValueError("Review not found")
         self.review_repo.delete(review_id)
         return True
+    
+    def delete_user(self, user_id):
+        """Delete a user by ID"""
+        try:
+            user = self.get_user(user_id)
+            if not user:
+                raise ValueError(f"User {user_id} not found")
+        
+        # Supprimer de la persistence
+            self.persistence.delete(user)
+            return {"message": f"User {user_id} deleted successfully"}
+    
+        except Exception as e:
+            raise ValueError(f"Error deleting user: {str(e)}")
+
+    def delete_place(self, place_id):
+        """Delete a place by ID"""
+        try:
+            place = self.get_place(place_id)
+            if not place:
+                raise ValueError(f"Place {place_id} not found")
+        
+            self.persistence.delete(place)
+            return {"message": f"Place {place_id} deleted successfully"}
+    
+        except Exception as e:
+            raise ValueError(f"Error deleting place: {str(e)}")
+
+    def delete_review(self, review_id):
+        """Delete a review by ID"""
+        try:
+            review = self.get_review(review_id)
+            if not review:
+                raise ValueError(f"Review {review_id} not found")
+            
+            self.persistence.delete(review)
+            return {"message": f"Review {review_id} deleted successfully"}
+        
+        except Exception as e:
+            raise ValueError(f"Error deleting review: {str(e)}")
+    
+    def delete_amenity(self, amenity_id):
+        """Delete an amenity by ID"""
+        try:
+            amenity = self.get_amenity(amenity_id)
+            if not amenity:
+                raise ValueError(f"Amenity {amenity_id} not found")
+        
+            self.persistence.delete(amenity)
+            return {"message": f"Amenity {amenity_id} deleted successfully"}
+        
+        except Exception as e:
+            raise ValueError(f"Error deleting amenity: {str(e)}")

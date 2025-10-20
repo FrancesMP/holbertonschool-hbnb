@@ -6,52 +6,26 @@ from .api.v1.places import api as places_ns
 from .api.v1.amenities import api as amenities_ns
 from .api.v1.users import api as users_ns
 
-
 def create_app():
     app = Flask(__name__)
     api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API', doc='/api/v1/')
 
-    # Placeholder for API namespaces (endpoints will be added later)
-    # Additional namespaces for places, reviews, and amenities will be added later
-
+ 
+    # Register all API namespaces
     api.add_namespace(places_ns, path='/api/v1/places')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(users_ns, path='/api/v1/users')
 
-
-    @app.route('/')
-    def index():
-        return "Welcome to HBNB API "
+    @api.route('/')
+    class WelcomeResource(Resource):
+        def get(self):
+            return {"message": "Welcome to HBNB API - Visit /api/v1/ for documentation"}
     
+    # Hello endpoint (tu peux garder si tu veux)
     @api.route('/hello')
     class HelloResource(Resource):
         def get(self):
-            return {"message": "Hello from HBNB API "}
-
-    """Test Route"""
-    @app.route('/api/v1/test-models')
-    def test_models_route():
-        from .models import User, Place, Review, Amenity
-        
-        """create data for testing with postman """
-        user = User("Postman", "Test", "postman@test.com")
-        place = Place("Test Villa", "Luxury villa", 300.0, 40.0, -70.0, user)
-        review = Review(5, "Perfect for testing!")
-        amenity = Amenity("Swimming Pool")
-        
-        place.add_review(review)
-        place.add_amenity(amenity)
-        
-        return {
-            "message": " All models work with Postman!",
-            "user": user.to_dict(),
-            "place": place.to_dict(),
-            "review": review.to_dict(),
-            "amenity": amenity.to_dict()
-        }
+            return {"message": "Hello from HBNB API"}
     
     return app
-    
-    
-    

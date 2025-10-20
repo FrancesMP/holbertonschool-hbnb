@@ -74,6 +74,16 @@ class PlaceResource(Resource):
             if "not found" in str(e).lower():
                 return {"error": "Place not found"}, 404
             return {"error": str(e)}, 400
+    
+    @api.response(200, 'Place deleted successfully')
+    @api.response(404, 'Place not found')
+    def delete(self, place_id):
+        """Delete a place by ID"""
+        try:
+            result = facade.delete_place(place_id)
+            return result, 200
+        except ValueError as e:
+            return {"error": str(e)}, 404
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
