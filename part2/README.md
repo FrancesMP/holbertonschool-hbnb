@@ -12,7 +12,7 @@ hbnb/
 │ ├── services/ # Application Layer
 │ └── persistence/ # Data Layer
 
-text
+
 
 ## 📋 Features
 
@@ -99,29 +99,30 @@ Persistence: Repository interface
     🔧 Key Features
 Data Validation : Each entity validates business rules:
 
-User email format and name length
+. User email format and name length
 
-Place coordinates and pricing
+. Place coordinates and pricing
 
-Review ratings and content
+. Review ratings and content
 
 UUID Identification: UUIDv4 for all entities provides:
 
-Global uniqueness
+. Global uniqueness
 
-Enhanced security
+. Enhanced security
 
-No ID conflicts
+. No ID conflicts
 
 Relationship Management  : 
-Places reference owners (Users)
+. Places reference owners (Users)
 
-Reviews link Users to Places
+. Reviews link Users to Places
 
-Places have multiple Amenities
+. Places have multiple Amenities
 
-                         Testing Examples
-Create User
+    Testing Examples : 
+
+1) Create User
 
 curl -X POST "http://localhost:5000/api/v1/users/" \
   -H "Content-Type: application/json" \
@@ -131,7 +132,7 @@ curl -X POST "http://localhost:5000/api/v1/users/" \
     "email": "john@example.com"
   }'
 
-Create Place
+2) Create Place
 
 curl -X POST "http://localhost:5000/api/v1/places/" \
   -H "Content-Type: application/json" \
