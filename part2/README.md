@@ -142,6 +142,7 @@ curl -X POST "http://localhost:5000/api/v1/places/" \
     "longitude": -118.2437,
     "owner_id": "USER_UUID"
   }'
+
 📁 Project Structure
 
 hbnb/
